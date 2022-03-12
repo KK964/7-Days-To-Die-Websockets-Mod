@@ -1,10 +1,9 @@
 ﻿using HarmonyLib;
 using System;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using GUI_2;
-using UnityEngine;
 
 namespace _7DTDWebsockets.patchs
 {
@@ -14,7 +13,6 @@ namespace _7DTDWebsockets.patchs
         {
             Log.Out("[Websocket] Runtime patches intinialized");
             Harmony harmony = new Harmony("com.gmail.kk964gaming.websockets.patch");
-            Harmony.DEBUG = true;
             harmony.PatchAll();
 
             foreach (var method in harmony.GetPatchedMethods())
@@ -22,6 +20,19 @@ namespace _7DTDWebsockets.patchs
                 Log.Out($"Successfully patched: {method.Name}");
             }
         }
+    }
+}
+
+class ReflectionUtils
+{
+    public static object GetValue(object obj, string field)
+    {
+        if (obj == null) return null;
+        if (field == null) return null;
+        Type type = obj.GetType();
+        FieldInfo info = type.GetField(field, BindingFlags.NonPublic | BindingFlags.Instance);
+        if (info == null) return null;
+        return info.GetValue(obj);
     }
 }
 
@@ -50,42 +61,6 @@ class PlayerDmgEvent
         this.player = player;
         this.cause = cause;
         this.damage = damage;
-    }
-}
-
-[HarmonyPatch]
-class ClientPlayerDamagePatch
-{
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(EntityAlive), "DamageEntity")]
-    static void Prefix(EntityAlive __instance, DamageSource _damageSource, int _strength, bool _criticalHit, float _impulseScale = 1f)
-    {
-        Log.Out($"EntityAlive damage : {__instance.GetDebugName()} {_strength}");
-        if (!(__instance is EntityPlayer)) return;
-        EntityPlayer player = (EntityPlayer)__instance;
-        _7DTDWebsockets.API.Send("PlayerDamage", JsonConvert.SerializeObject(new PlayerDmgEvent(new Player(player), _damageSource.damageType.ToString(), _strength)));
-        return;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Entity), "DamageEntity")]
-    static void Prefix2(Entity __instance, DamageSource _damageSource, int _strength, bool _criticalHit, float impulseScale = 1f)
-    {
-        Log.Out($"Entity damage : {__instance.GetDebugName()} {_strength}");
-        if (!(__instance is EntityPlayer)) return;
-        EntityPlayer player = (EntityPlayer)__instance;
-        _7DTDWebsockets.API.Send("PlayerDamage", JsonConvert.SerializeObject(new PlayerDmgEvent(new Player(player), _damageSource.damageType.ToString(), _strength)));
-        return;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(EntityPlayer), "DamageEntity")]
-    static void Prefix3(EntityPlayer __instance, DamageSource _damageSource, int _strength, bool _criticalHit, float _impulseScale = 1f)
-    {
-        Log.Out($"EntityAlive damage : {__instance.GetDebugName()} {_strength}");
-        EntityPlayer player = __instance;
-        _7DTDWebsockets.API.Send("PlayerDamage", JsonConvert.SerializeObject(new PlayerDmgEvent(new Player(player), _damageSource.damageType.ToString(), _strength)));
-        return;
     }
 }
 
@@ -172,3 +147,31 @@ class PatchEntityDeath
     }
 }
 
+[HarmonyPatch]
+class DamagePatches
+{
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(NetPackageDamageEntity), "ProcessPackage")]
+    static void DamageEntityPacketProccessPrefix(NetPackage __instance, World _world, GameManager _callbacks)
+    {
+        string name = NetPackageManager.GetPackageName(__instance.PackageId);
+        if (name != "NetPackageDamageEntity") return;
+        NetPackageDamageEntity damage = (NetPackageDamageEntity) __instance;
+        int entityId = (int) ReflectionUtils.GetValue(damage, "entityId");
+        Entity entity = _world.GetEntity(entityId);
+        if (entity == null || !(entity is EntityPlayer)) return;
+        EnumDamageTypes damageType = (EnumDamageTypes)ReflectionUtils.GetValue(damage, "damageTyp");
+        int dmg = (ushort)ReflectionUtils.GetValue(damage, "strength");
+        _7DTDWebsockets.API.Send("PlayerDamage", JsonConvert.SerializeObject(new PlayerDmgEvent(new Player((EntityPlayer) entity), damageType.ToString(), dmg)));
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(EntityAlive), "DamageEntity")]
+    static void EntityAliveDamagePrefix(EntityAlive __instance, DamageSource _damageSource, int _strength, bool _criticalHit, float _impulseScale = 1f)
+    {
+        if (!(__instance is EntityPlayer)) return;
+        EntityPlayer player = (EntityPlayer)__instance;
+        _7DTDWebsockets.API.Send("PlayerDamage", JsonConvert.SerializeObject(new PlayerDmgEvent(new Player(player), _damageSource.damageType.ToString(), _strength)));
+        return;
+    }
+}

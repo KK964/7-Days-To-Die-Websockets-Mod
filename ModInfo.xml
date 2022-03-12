@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+	<ModInfo>
+		<Name value="WebsocketIntegration" />
+		<Description value="This mod enables external programs listen to ingame events." />
+		<Author value="KK964" />
+		<Version value="1.0.0" />
+	</ModInfo>
+</xml>
