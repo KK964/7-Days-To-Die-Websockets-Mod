@@ -113,7 +113,21 @@ namespace _7DTDWebsockets.Connections
 
             //TODO: Add dynamic paths to methods
 
+            if (path == "/command")
+            {
+                byte[] responseBytes;
+                res.ContentType = "text/plain";
+                res.ContentEncoding = Encoding.UTF8;
+                List<string> cmdResponse = RunCommand(content);
+                responseBytes = Encoding.UTF8.GetBytes(string.Join("\n", cmdResponse));
+                res.ContentLength64 = responseBytes.LongLength;
+                res.Close(responseBytes, true);
+            }
         }
 
+        private List<string> RunCommand(string command)
+        {
+            return SingletonMonoBehaviour<SdtdConsole>.Instance.ExecuteSync(command, null);
+        }
     }
 }
