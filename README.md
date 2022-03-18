@@ -69,3 +69,31 @@ Connect to the websocket server; the server will send updates about the game.
   - `PlayerDamage {"player": {"name":"PlayerName"}, "damage": "DamageAmount", "cause": "DamageCause"}`
 - PlayerKillEntity:
   - `PlayerKillEntity {"player": {"name":"PlayerName"}, "entity":"EntityName", "animal":bool, "zombie":bool}`
+
+## HTTP API
+
+The HTTP API is not yet fully implemented.
+
+Using:
+
+1. Send POST/GET to host:port/api/endpoint
+
+### Get
+
+- This is currently not implemented.
+
+### Post
+
+- `/command`: Send a command to the server. The command to send is in the body of the request. The response will be the result of the command.
+
+```
+curl -X POST http://localhost:9000/api/command
+   -H "Authentication: abc123"
+   -d 'gettime'
+```
+
+->
+
+> ```
+> Day 3, 06:23
+> ```
