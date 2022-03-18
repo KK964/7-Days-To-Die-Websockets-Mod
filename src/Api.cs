@@ -4,17 +4,20 @@ using System.Xml;
 using System.Text;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using WebSocketSharp;
-using WebSocketSharp.Server;
 
 using _7DTDWebsockets.patchs;
+using _7DTDWebsockets.Connections;
 
 namespace _7DTDWebsockets
 {
     public class API : IModApi
     {
+        public static API Instance { get; private set; }
+        private static HttpConnection Http;
+
         public void InitMod(Mod mod)
         {
+            Instance = this;
             string path = ModManager.GetMod("WebsocketIntegration").Path + "/Config.xml";
             
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -47,11 +50,13 @@ namespace _7DTDWebsockets
                 Log.Out($"[Websocket] Config: {i.Key} : {i.Value}");
             }
 
-            string host = (data["Host"] ?? "localhost").ToString();
-            string port = (data["Port"] ?? "9000").ToString();
+            int port = 9000;
+            string auth = "";
+            if (data.ContainsKey("Port")) port = int.Parse(((data["Port"] ?? "9000")).ToString());
+            if (data.ContainsKey("Authentication")) auth = (data["Authentication"] ?? string.Empty).ToString();
 
             RunTimePatch.PatchAll();
-            Websocket.Start(host + ":" + port);
+            StartConnection(port, auth);
             ModEvents.GameShutdown.RegisterHandler(GameShutdown);
             ModEvents.ChatMessage.RegisterHandler(ChatMessage);
             ModEvents.PlayerLogin.RegisterHandler(PlayerLogin);
@@ -59,9 +64,33 @@ namespace _7DTDWebsockets
             ModEvents.PlayerSpawnedInWorld.RegisterHandler(PlayerSpawnedInWorld);
         }
 
+        private void StartConnection(int port, string auth)
+        {
+            Log.Out($"[Websocket] Starting api on port: {port}");
+            Http = new HttpConnection(port, auth);
+            Http.server.AddWebSocketService<WebsocketConnection>("/");
+            Http.server.Start();
+        }
+
+        private void StopConnection()
+        {
+            if (Http != null) Http.server.Stop();
+        }
+
+        public static void Send(string eventName, string arguments)
+        {
+            Send(eventName + " " + arguments);
+        }
+
+        public static void Send(string message)
+        {
+            if (Http == null) return;
+            WebsocketConnection.WebSocketInstance.SendBroadcast(message);
+        }
+
         private void GameShutdown()
         {
-            Websocket.Stop();
+            StopConnection();
         }
 
 
@@ -134,64 +163,6 @@ namespace _7DTDWebsockets
             public Player (EntityPlayer player)
             {
                 this.name = player.EntityName;
-            }
-        }
-
-        public static void Send(string eventName, string arguments)
-        {
-            Websocket.Send(eventName + " " + arguments);
-        }
-
-        public class Websocket
-        {
-            public static WebSocketServer server;
-            public static EventSocket eventSocket;
-
-            public static void Start(string host)
-            {
-                Log.Out($"[Websocket] Starting socket server on: ws://{host}/");
-                server = new WebSocketServer("ws://" + host);
-                server.AddWebSocketService<EventSocket>("/");
-                server.Start();
-            }
-
-            public static void Stop()
-            {
-                if (server != null) server.Stop();
-            }
-
-            public static void Send(string message)
-            {
-                if (server == null || eventSocket == null) return;
-                eventSocket.SendBroadcast(message);
-            }
-
-            public class EventSocket : WebSocketBehavior
-            {
-                public void SendBroadcast(string msg)
-                {
-                    Sessions.Broadcast(msg);
-                }
-
-                protected override void OnOpen()
-                {
-                    if (eventSocket == null) eventSocket = this;
-                }
-
-                protected override void OnError(ErrorEventArgs e)
-                {
-                    if (eventSocket == null) eventSocket = this;
-                }
-
-                protected override void OnClose(CloseEventArgs e)
-                {
-                    if (eventSocket == null) eventSocket = this;
-                }
-
-                protected override void OnMessage(MessageEventArgs e)
-                {
-                    Sessions.Broadcast(e.Data);
-                }
             }
         }
     }

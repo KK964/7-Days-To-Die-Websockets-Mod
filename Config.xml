@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Config>
-  <Host>localhost</Host>
   <Port>9000</Port>
+  <Authentication></Authentication>
 </Config>
