@@ -84,7 +84,7 @@ namespace _7DTDWebsockets
 
         public static void Send(string message)
         {
-            if (Http == null) return;
+            if (Http == null || WebsocketConnection.WebSocketInstance == null) return;
             WebsocketConnection.WebSocketInstance.SendBroadcast(message);
         }
 
