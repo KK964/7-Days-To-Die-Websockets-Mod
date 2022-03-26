@@ -2,6 +2,7 @@
 using System;
 using System.Xml;
 using System.Text;
+using System.Threading;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -67,9 +68,12 @@ namespace _7DTDWebsockets
         private void StartConnection(int port, string auth)
         {
             Log.Out($"[Websocket] Starting api on port: {port}");
-            Http = new HttpConnection(port, auth);
-            Http.server.AddWebSocketService<WebsocketConnection>("/");
-            Http.server.Start();
+            new Thread(() =>
+            {
+                Http = new HttpConnection(port, auth);
+                Http.server.AddWebSocketService<WebsocketConnection>("/");
+                Http.server.Start();
+            }).Start();
         }
 
         private void StopConnection()
