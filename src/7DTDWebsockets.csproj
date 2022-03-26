@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api.cs" />
+    <Compile Include="Connections\ConsoleConnection.cs" />
     <Compile Include="Connections\HttpConnection.cs" />
     <Compile Include="Connections\WebsocketConnection.cs" />
     <Compile Include="Harmony\RunTimePatch.cs" />

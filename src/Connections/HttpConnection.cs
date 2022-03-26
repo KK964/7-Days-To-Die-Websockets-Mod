@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Net;
@@ -80,7 +83,7 @@ namespace _7DTDWebsockets.Connections
             res.Close();
         }
 
-        private void Server_OnPost(object sender, HttpRequestEventArgs e)
+        private async void Server_OnPost(object sender, HttpRequestEventArgs e)
         {
             var req = e.Request;
             var res = e.Response;
@@ -127,7 +130,33 @@ namespace _7DTDWebsockets.Connections
 
         private List<string> RunCommand(string command)
         {
-            return SingletonMonoBehaviour<SdtdConsole>.Instance.ExecuteSync(command, null);
+            SdtdConsole sdtd = SingletonMonoBehaviour<SdtdConsole>.Instance;
+            ConsoleConnection console = new ConsoleConnection();
+            sdtd.ExecuteAsync(command, console);
+            FieldInfo queueField = typeof(SdtdConsole).GetField("m_commandsToExecuteAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            try
+            {
+                bool running = true;
+                while (running)
+                {
+                    bool hasCommand = false;
+                    object cmdQueue = queueField.GetValue(sdtd);
+                    foreach (object cmd in (cmdQueue as IEnumerable))
+                    {
+                        Type type = cmd.GetType();
+                        string com = (string)cmd.GetType().GetField("command", BindingFlags.Public | BindingFlags.Instance).GetValue(cmd);
+                        if (com == command) hasCommand = true;
+                    }
+                    running = hasCommand;
+                    Thread.Sleep(50);
+                }
+            } catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+
+            return console.lines;
         }
     }
 }
