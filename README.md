@@ -4,6 +4,10 @@
 
 This is a mod for [7 Days To Die](https://7daystodie.com/). It allows you to connect to the websocket server and receive updates about the game.
 
+# IMPORTANT
+
+You as a user are responsible for your own actions. This mod is not intended for revenue generation, and if used in such way, will have no support provided.
+
 ## Setup
 
 To install you need to either download a release, or build the mod yourself.
