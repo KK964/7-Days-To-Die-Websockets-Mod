@@ -5,8 +5,11 @@
 This is a mod for [7 Days To Die](https://7daystodie.com/). It allows you to connect to the websocket server and receive updates about the game.
 
 # IMPORTANT
+You as a user are responsible for your own actions. This mod is not intended for revenue generation, and if used in such way, will have no support provided. This mod is provided as is, and as a user of the mod, you must follow all [End User License Agreements](https://7daystodie.com/eula/), and [Terms of Service](https://7daystodie.com/terms-of-service/) policies provided by The Fun Pimps Entertainment LLC. In no way shape or form is this mod associated with The Fun Pimps Entertainment LLC, or Streamer.bot, and any liabilities for any parties involved shall only be handled between yourself, and The Fun Pimps Entertainment LLC.
 
-You as a user are responsible for your own actions. This mod is not intended for revenue generation, and if used in such way, will have no support provided.
+----
+
+In the instance of this mod violating terms and conditions, file a removal request as an issue on the [GitHub repository](https://github.com/KK964/7-Days-To-Die-Websockets-Mod)
 
 ## Setup
 
