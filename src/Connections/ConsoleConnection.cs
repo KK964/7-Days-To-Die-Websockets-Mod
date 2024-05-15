@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+
+//original work done by KK
+//removed unecessary using statements -MM
 
 namespace _7DTDWebsockets.Connections
 {

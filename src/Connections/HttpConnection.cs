@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Net;
 using System.IO;
+using System.Collections.Specialized;
 
 using WebSocketSharp;
 using WebSocketSharp.Server;
+using _7DTDWebsockets.Extensions;
 
 namespace _7DTDWebsockets.Connections
 {
@@ -45,7 +47,7 @@ namespace _7DTDWebsockets.Connections
         {
             var req = e.Request;
 
-            if (!string.IsNullOrEmpty(authentication) && !req.Headers.Contains("Authentication"))
+            if (!string.IsNullOrEmpty(authentication) && !req.Headers.ContainsKey("Authentication"))
             {
                 return false;
             }
@@ -102,7 +104,7 @@ namespace _7DTDWebsockets.Connections
             }
 
             path = path.Substring("/api".Length);
-            
+
             string content = "";
             if (req.HasEntityBody)
             {
@@ -151,7 +153,8 @@ namespace _7DTDWebsockets.Connections
                     running = hasCommand;
                     Thread.Sleep(50);
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Log.Error(ex.Message);
             }
