@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>_7DTDWebsockets</RootNamespace>
-    <AssemblyName>7DTD_MM_Updated_Websockets</AssemblyName>
+    <AssemblyName>7DTDWebsockets</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -72,7 +72,6 @@
     <Compile Include="Connections\HttpConnection.cs" />
     <Compile Include="Connections\WebsocketConnection.cs" />
     <Compile Include="Harmony\RunTimePatch.cs" />
-    <Compile Include="NameValueCollectionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

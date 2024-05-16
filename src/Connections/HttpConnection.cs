@@ -5,15 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Net;
 using System.IO;
-using System.Collections.Specialized;
-
-using WebSocketSharp;
 using WebSocketSharp.Server;
-using _7DTDWebsockets.Extensions;
 
 namespace _7DTDWebsockets.Connections
 {
@@ -47,7 +42,7 @@ namespace _7DTDWebsockets.Connections
         {
             var req = e.Request;
 
-            if (!string.IsNullOrEmpty(authentication) && !req.Headers.ContainsKey("Authentication"))
+            if (!string.IsNullOrEmpty(authentication) && !req.Headers.Contains("Authentication"))
             {
                 return false;
             }
