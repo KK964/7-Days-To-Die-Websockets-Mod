@@ -42,7 +42,7 @@ namespace _7DTDWebsockets.Connections
         {
             var req = e.Request;
 
-            if (!string.IsNullOrEmpty(authentication) && !req.Headers.Contains("Authentication"))
+            if (!string.IsNullOrEmpty(authentication) && !req.Headers.AllKeys.Contains("Authentication"))
             {
                 return false;
             }
