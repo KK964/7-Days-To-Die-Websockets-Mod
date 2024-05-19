@@ -94,7 +94,7 @@ Connect to the websocket server; the server will send updates about the game.
 - PlayerDamage:
   - `PlayerDamage {"player": {"name":"PlayerName"}, "damage": "DamageAmount", "cause": "DamageCause"}`
 - PlayerKillEntity:
-  - `PlayerKillEntity {"player": {"name":"PlayerName"}, "entity":"EntityName", "animal":bool, "zombie":bool}`
+  - `PlayerKillEntity {"player": {"name":"PlayerName"}, "entity":"EntityName", "animal":bool, "zombie":bool, "headshot":bool, "weaponType": "WeaponType"}`
 
 ## HTTP API
 
