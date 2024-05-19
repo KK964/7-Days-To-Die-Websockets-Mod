@@ -32,25 +32,44 @@ To install you need to either download a release, or build the mod yourself.
 ### Build
 
 1. Clone the repository
-2. Inside visual studio, open `/src` as the project
-3. Build the project
-4. The resulting dll will be in `/src/bin/Debug/` as `7DTDWebsockets.dll`
-5. Make a new folder in your mods folder called `7DTDWebsockets`
-6. Copy the dll to the new folder
-7. Copy `ModInfo.xml` to the new folder
-8. Copy `Config.xml` to the new folder
-9. Copy `websocket-sharp.dll` to the new folder
-10. Copy `UnityEngine.dll` to the new folder
-11. Copy `UnityEngine.CoreModule.dll` to the new folder
-12. Copy `0Harmony.dll` to the new folder
-13. Restart the game
+2. Run the update local references script
+
+   - Windows
+     - Right click the script at `./scripts/updateLocalRefs.ps1`
+     - Click `Run with PowerShell`
+     - The script will ask for the path to the 7 Days To Die install directory
+     - Debugging
+       - If you get a file not found error, you may need to give the script the full path to the 7 Days To Die install directory
+         - `./scripts/updateLocalRefs.ps1 -path /path/to/7dtd`
+
+   - Linux or bash compatible shell
+     - `./scripts/updateLocalRefs.sh "<path to 7 Days To Die install directory>"`
+     - As 7D2D contains spaces in the path, you need to wrap the path in quotes
+     - Debugging
+       - If you get a permission denied error, you may need to give the script execute permissions
+         - `chmod +x ./scripts/updateLocalRefs.sh`
+       - If you get a file not found error, you may need to give the script the full path to the 7 Days To Die install directory
+         - `./scripts/updateLocalRefs.sh /path/to/7dtd`
+
+3. Inside visual studio, open `/src` as the project
+4. Build the project
+5. The resulting dll will be in `/src/bin/Debug/` as `7DTDWebsockets.dll`
+6. Make a new folder in your mods folder called `7DTDWebsockets`
+7. Copy the dll to the new folder
+8. Copy `ModInfo.xml` to the new folder
+9. Copy `Config.xml` to the new folder
+10. Copy `websocket-sharp.dll` to the new folder
+11. Copy `UnityEngine.dll` to the new folder
+12. Copy `UnityEngine.CoreModule.dll` to the new folder
+13. Copy `0Harmony.dll` to the new folder
+14. Restart the game
 
 ### Config.xml
 
 - Host: The hostname of the websocket server
 - Port: The port of the websocket server
 
----
+----
 
 ## Usage
 
@@ -93,7 +112,7 @@ Using:
 
 - `/command`: Send a command to the server. The command to send is in the body of the request. The response will be the result of the command.
 
-```
+```bash
 curl -X POST http://localhost:9000/api/command
    -H "Authentication: abc123"
    -d 'gettime'
@@ -101,6 +120,4 @@ curl -X POST http://localhost:9000/api/command
 
 ->
 
-> ```
-> Day 3, 06:23
-> ```
+> `Day 3, 06:23`
