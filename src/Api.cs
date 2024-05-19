@@ -1,13 +1,13 @@
-﻿using Platform.Steam;
-using System;
-using System.Xml;
+﻿using System.Xml;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-
 using _7DTDWebsockets.patchs;
 using _7DTDWebsockets.Connections;
+
+//original work done by KK
+//removed some unecessary using statements and slight change to authentication method by Mustached_Maniac
 
 namespace _7DTDWebsockets
 {
