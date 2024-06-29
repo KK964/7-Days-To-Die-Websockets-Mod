@@ -59,7 +59,7 @@ namespace _7DTDWebsockets
             RunTimePatch.PatchAll();
             StartConnection(port, auth);
             ModEvents.GameShutdown.RegisterHandler(GameShutdown);
-            ModEvents.ChatMessage.RegisterHandler(ChatMessage);
+            //ModEvents.ChatMessage.RegisterHandler(ChatMessage); chat messages handled differently, temporarily disabling this to make work in V1.0
             ModEvents.PlayerLogin.RegisterHandler(PlayerLogin);
             ModEvents.PlayerDisconnected.RegisterHandler(PlayerDisconnect);
             ModEvents.PlayerSpawnedInWorld.RegisterHandler(PlayerSpawnedInWorld);
@@ -97,7 +97,9 @@ namespace _7DTDWebsockets
             StopConnection();
         }
 
-
+        /*
+        Temporarily disabling the chat message since it's handled differently now and caused the mod not to work
+        
         private class ChatMsg
         {
             public Player player;
@@ -115,7 +117,7 @@ namespace _7DTDWebsockets
             Send("ChatMessage", JsonConvert.SerializeObject(m));
             return true;
         }
-
+        */
         private class PlayerOnlyObj
         {
             public Player player;
